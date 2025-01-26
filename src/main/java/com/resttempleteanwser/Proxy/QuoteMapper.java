@@ -1,7 +1,4 @@
 package com.resttempleteanwser.Proxy;
-
-
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +12,12 @@ import java.util.Map;
 
 @Component
 public class QuoteMapper {
-    Quote mapJsonToQuote(String json) throws JsonProcessingException {
+    public Quote mapJsonToQuote(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, Quote.class);
+        Map<String, Object> responseMap = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> valueMap = (Map<String, Object>) responseMap.get("value");
+        QuoteValue quoteValue = objectMapper.convertValue(valueMap, QuoteValue.class);
+        return new Quote(quoteValue.id(), quoteValue);
     }
     public List<Quote> mapJsonToListQuote(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
